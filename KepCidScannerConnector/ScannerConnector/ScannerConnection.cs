@@ -1,4 +1,5 @@
 ﻿using KepServer.CidLib;
+using ScannerConnector.Http.Xml.Response;
 using System;
 using System.Threading;
 
@@ -6,8 +7,9 @@ namespace ScannerConnector
 {
     public class ScannerConnection
     {
-        // Change this according to the actual URL, or better yet: make configurable
-        private const string scannerUrl = @"http://192.168.178.41:8735/WSIQueryService/ProcessCommandsViaGet";
+        // Change this according to the actual URL, or better yet: make configurable.
+        // Note: Add this in the form of "http://domain:port" (Without trailing '/')
+        private const string scannerBaseUrl = @"http://192.168.178.41:8735";
 
         private volatile bool continueRunning = true;
         private CidScanner cidScanner;
@@ -17,8 +19,11 @@ namespace ScannerConnector
         public void Run()
         {
             cidScanner = new CidScanner();
-            httpScanner = new HttpScanner(scannerUrl);
+            cidScanner.Run();
 
+            httpScanner = new HttpScanner(scannerBaseUrl);
+
+            Thread.Sleep(2000);    // QAD Give the CUD system some time to initialize
             RunUpdateLoop();
 
             CloseConnections();
@@ -53,20 +58,40 @@ namespace ScannerConnector
         private void RunUpdateLoop()
         {
 
-            httpScanner.GetStatus();
+            OrderInterface scannerResponse;
 
             while (continueRunning)
             {
+
                 // Read stuff from the scanner through REST
+                scannerResponse = httpScanner.GetStatus();
+
 
                 // Write that stuff to the Kepware tags
+                if (scannerResponse.ErrorSpecified)
+                {
+                    cidScanner.ErrorMessageTag.Value = scannerResponse.Message;
+                }
+                else
+                {
+                    cidScanner.ErrorMessageTag.Value = "OK";
+                }
+
+                // **
+                // Just for demo purposes remove the error line for a few seconds before trying again
+                // **
+                Thread.Sleep(3000);
+                cidScanner.ErrorMessageTag.Value = "Will try again in a few seconds" + (char) 0;
+                // **
+                // END of demo code
+                //***
 
                 // Read kepware tags if they contain a command for the scanner
 
                 // Send those commands to the scanner
 
                 // Sleep. Because otherwise we'll keep the CPU busy for 100%
-                Thread.Sleep(5000);
+                Thread.Sleep(3000);
             }
         }
 

@@ -12,18 +12,22 @@ namespace KepCidScannerConnectorApp
 
         static void Main(string[] args)
         {
-            connection = new ScannerConnection();
 
+            // To export the configuration XML file, set this to true and run the application once.
+            // The xml file will be in the bin/debug folder
             bool exportConfig = false;
 
-            BeginWaitingForUserExit();
+            connection = new ScannerConnection();
+            
 
             if (exportConfig)
             {
                 connection.ExportCidConfiguration();
+                Thread.Sleep(2000);
             }
             else
             {
+                BeginWaitingForUserExit();
                 connection.Run();
             }
 

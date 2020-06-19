@@ -18,7 +18,9 @@ namespace ScannerConnector
 
         HttpClient httpClient;
 
-        private ScannerApiXmlParser xmlParser = new ScannerApiXmlParser();
+        private ScannerResponseParser responseParser = new ScannerResponseParser();
+
+        private ScannerCommandParser commandParser = new ScannerCommandParser();
 
         public HttpScanner(string url)
         {
@@ -37,7 +39,7 @@ namespace ScannerConnector
             response.EnsureSuccessStatusCode();
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            OrderInterface result = xmlParser.GetOrderResult(responseBody);
+            OrderInterface result = responseParser.GetOrderResult(responseBody);
             return result;
         }
 

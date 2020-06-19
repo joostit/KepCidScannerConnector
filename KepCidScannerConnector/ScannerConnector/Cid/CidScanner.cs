@@ -28,7 +28,7 @@ namespace ScannerConnector
             Tags = new TagsCollection();
 
             // Instantiate the tag properties here
-            ErrorMessageTag = new StringTag("ErrorMessage", "The error message when available", 50);
+            ErrorMessageTag = new StringTag("ErrorMessage", "The error message when available", 250);
 
             // Create the device and add the tags
             Tags.AddDevice("3ShapeScanner", "The 3Shape scanner")
