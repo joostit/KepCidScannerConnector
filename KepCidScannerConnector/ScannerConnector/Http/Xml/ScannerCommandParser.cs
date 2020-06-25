@@ -17,7 +17,7 @@ namespace ScannerConnector.Http.Xml
             serializer = new XmlSerializer(typeof(OrderInterface));
         }
 
-        public string GetOrderResult(OrderInterface commands)
+        public string GetOrderInterfaceString(OrderInterface commands)
         {
             string result = null;
 
@@ -28,6 +28,14 @@ namespace ScannerConnector.Http.Xml
             }
 
             return result;
+        }
+
+        public string GetShapeListCommand()
+        {
+            OrderInterface command = new OrderInterface();
+            CommandWithRestriction[] getShapeListCommand = new CommandWithRestriction[0];
+            command.CommandList.CommandGetShapeList = getShapeListCommand;
+            return GetOrderInterfaceString(command);
         }
 
     }

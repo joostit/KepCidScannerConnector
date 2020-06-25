@@ -1,5 +1,4 @@
 ﻿using ScannerConnector.Http.Xml;
-using ScannerConnector.Http.Xml.Response;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,12 +10,12 @@ namespace ScannerConnector
     class HttpScanner
     {
 
-        private const string ProcessCommandsPath = @"/WSIQueryService/ProcessCommandsViaGet";
-
+        private const string HttpGetCommandsPath = @"/WSIQueryService/ProcessCommandsViaGet";
+        private const string HttpPostCommandspath = @"WSIQueryService/ProcessCommandsViaPost";
         public string Url { get; set; }
         public int port { get; set; }
 
-        HttpClient httpClient;
+        private HttpClient httpClient;
 
         private ScannerResponseParser responseParser = new ScannerResponseParser();
 
@@ -33,14 +32,42 @@ namespace ScannerConnector
         }
 
 
-        public OrderInterface GetStatus()
+        public Http.Xml.Response.OrderInterface GetStatus()
         {
-            HttpResponseMessage response = httpClient.GetAsync(ProcessCommandsPath).Result;
+            HttpResponseMessage response = httpClient.GetAsync(HttpGetCommandsPath).Result;
             response.EnsureSuccessStatusCode();
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            OrderInterface result = responseParser.GetOrderResult(responseBody);
+            Http.Xml.Response.OrderInterface result = responseParser.GetOrderResult(responseBody);
             return result;
+        }
+
+
+        public List<string> GetShapeList()
+        {
+            List<string> retVal = new List<string>();
+
+            string content = commandParser.GetShapeListCommand();
+
+            HttpContent body = new StringContent(content);
+
+            HttpResponseMessage response = httpClient.PostAsync(HttpPostCommandspath, body).Result;
+            response.EnsureSuccessStatusCode();
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            Http.Xml.Response.OrderInterface result = responseParser.GetOrderResult(responseBody);
+
+            if(result.ResultList.Items.Length != 1)
+            {
+                throw new ProtocolViolationException($"Expected to find exactly one result in the response ResultList. Found {result.ResultList.Items.Length}");
+            }
+
+            foreach (var shape in result.ResultList.Items[0].ShapeList)
+            {
+                retVal.Add(shape.Name);
+            }
+
+            return retVal;
         }
 
 

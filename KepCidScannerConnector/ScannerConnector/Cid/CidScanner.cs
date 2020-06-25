@@ -15,6 +15,8 @@ namespace ScannerConnector
 
         public StringTag ErrorMessageTag { get; private set; }
 
+        public StringArrayTag ShapeListTag { get; private set; }
+
         public CidScanner()
         {
             CreateTags();
@@ -28,11 +30,13 @@ namespace ScannerConnector
             Tags = new TagsCollection();
 
             // Instantiate the tag properties here
-            ErrorMessageTag = new StringTag("ErrorMessage", "The error message when available", 250);
+            ErrorMessageTag = new StringTag("ErrorMessage", "The error message when available", 150);
+            ShapeListTag = new StringArrayTag("ShapeList", 30, "The shape list when available", 100);
 
             // Create the device and add the tags
             Tags.AddDevice("3ShapeScanner", "The 3Shape scanner")
-                .AddTag(ErrorMessageTag);
+                .AddTag(ErrorMessageTag)
+                .AddTag(ShapeListTag);
 
         }
 

@@ -1,6 +1,6 @@
 ﻿using KepServer.CidLib;
-using ScannerConnector.Http.Xml.Response;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace ScannerConnector
@@ -57,15 +57,20 @@ namespace ScannerConnector
 
         private void RunUpdateLoop()
         {
-
-            OrderInterface scannerResponse;
+            List<string> emptyList = new List<string>();
+            Http.Xml.Response.OrderInterface scannerResponse;
+            List<string> shapeList;
 
             while (continueRunning)
             {
 
                 // Read stuff from the scanner through REST
                 scannerResponse = httpScanner.GetStatus();
-
+                
+                //shapeList = httpScanner.GetShapeList();
+                // The line above has been replaced by this fake implementation. ToDo: Undo this when testing
+                shapeList = new List<string> { "ShapeA", "ShapeB", "ShapeC" };
+                
 
                 // Write that stuff to the Kepware tags
                 if (scannerResponse.ErrorSpecified)
@@ -77,11 +82,15 @@ namespace ScannerConnector
                     cidScanner.ErrorMessageTag.Value = "OK";
                 }
 
+                SetShapeListTag(shapeList);
+
+
                 // **
                 // Just for demo purposes remove the error line for a few seconds before trying again
                 // **
                 Thread.Sleep(3000);
                 cidScanner.ErrorMessageTag.Value = "Will try again in a few seconds" + (char) 0;
+                SetShapeListTag(emptyList);
                 // **
                 // END of demo code
                 //***
@@ -95,6 +104,22 @@ namespace ScannerConnector
             }
         }
 
+
+        private void SetShapeListTag(List<string> shapeList)
+        {
+            string[,] targetArray = new string[1, cidScanner.ShapeListTag.Columns];
+
+            for(int i = 0; i < targetArray.Length; i++)
+            {
+                targetArray[0, i] = String.Empty;
+            }
+
+            for (int i = 0; i < shapeList.Count; i++)
+            {
+                targetArray[0, i] = shapeList[i];
+            }
+            cidScanner.ShapeListTag.Value = targetArray;
+        }
 
 
         public void Stop()
