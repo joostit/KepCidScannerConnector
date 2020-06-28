@@ -47,7 +47,7 @@ namespace ScannerConnector
         {
             List<string> retVal = new List<string>();
 
-            string content = commandParser.GetShapeListCommand();
+            string content = "inputString=" + commandParser.GetShapeListCommand();
 
             HttpContent body = new StringContent(content);
 

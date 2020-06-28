@@ -67,9 +67,9 @@ namespace ScannerConnector
                 // Read stuff from the scanner through REST
                 scannerResponse = httpScanner.GetStatus();
                 
-                //shapeList = httpScanner.GetShapeList();
+                shapeList = httpScanner.GetShapeList();
                 // The line above has been replaced by this fake implementation. ToDo: Undo this when testing
-                shapeList = new List<string> { "ShapeA", "ShapeB", "ShapeC" };
+                //shapeList = new List<string> { "ShapeA", "ShapeB", "ShapeC" };
                 
 
                 // Write that stuff to the Kepware tags

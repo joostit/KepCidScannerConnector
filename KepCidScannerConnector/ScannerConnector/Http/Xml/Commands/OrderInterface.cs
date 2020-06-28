@@ -16,7 +16,7 @@ namespace ScannerConnector.Http.Xml.Commands
 
         private CommandList commandListField;
 
-        private double versionField;
+        private double versionField = 1.0;
 
         private CommandListType typeField;
 

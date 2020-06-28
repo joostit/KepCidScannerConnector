@@ -32,10 +32,17 @@ namespace ScannerConnector.Http.Xml
 
         public string GetShapeListCommand()
         {
-            OrderInterface command = new OrderInterface();
-            CommandWithRestriction[] getShapeListCommand = new CommandWithRestriction[0];
-            command.CommandList.CommandGetShapeList = getShapeListCommand;
-            return GetOrderInterfaceString(command);
+            OrderInterface orderInterfaceObject = new OrderInterface();
+            orderInterfaceObject.CommandList = new CommandList();
+            orderInterfaceObject.CommandList.CommandGetShapeList = new CommandWithRestriction[1];
+
+            CommandWithRestriction commandWithRestriction = new CommandWithRestriction();
+            commandWithRestriction.id = "1";
+
+            orderInterfaceObject.CommandList.CommandGetShapeList[0] = commandWithRestriction;
+
+            string xmlString = GetOrderInterfaceString(orderInterfaceObject);
+            return xmlString;
         }
 
     }
